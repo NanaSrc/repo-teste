@@ -14,7 +14,11 @@ class To_doController extends Controller
      */
     public function index()
     {
-        //
+        $to_do = To_do::latest()->paginate(5);
+
+        return view('to_do.index', compact('to_do'))
+
+            ->with('i', (request()->input('page', 1) - 1) * 5);
     }
 
     /**
@@ -24,7 +28,7 @@ class To_doController extends Controller
      */
     public function create()
     {
-        //
+        return view('clientes.create');
     }
 
     /**
@@ -35,7 +39,14 @@ class To_doController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'Titulo' => 'required',
+        ]);
+
+        To_do::create($request->all());
+
+        return redirect()->route('to_do.index')
+            ->with('success', 'Nova tarefa inserida.');
     }
 
     /**
@@ -46,7 +57,7 @@ class To_doController extends Controller
      */
     public function show(To_do $to_do)
     {
-        //
+        return view('to_do.show', compact('to_do'));
     }
 
     /**
@@ -57,7 +68,7 @@ class To_doController extends Controller
      */
     public function edit(To_do $to_do)
     {
-        //
+        return view('to_do.edit', compact('to_do'));
     }
 
     /**
@@ -69,7 +80,15 @@ class To_doController extends Controller
      */
     public function update(Request $request, To_do $to_do)
     {
-        //
+        $request->validate([
+
+            'Titulo' => 'required',
+
+        ]);
+
+        $to_do->update($request->all());
+
+        return redirect()->route('to_do.index')->with('success', 'Tarefa atualizada.');
     }
 
     /**
@@ -80,6 +99,8 @@ class To_doController extends Controller
      */
     public function destroy(To_do $to_do)
     {
-        //
+        $to_do->delete();
+        
+        return redirect()->route('to_do.index')->with('success', 'Tarefa eliminada!');
     }
 }
